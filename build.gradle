@@ -1,0 +1,16 @@
+apply plugin: 'java'
+
+repositories {
+  jcenter()
+  maven {
+    url "http://yohei224.github.io/"
+  }
+}
+
+
+
+dependencies {
+  compile 'com.github.yohei224:gristle:0.0.1'
+  compile 'org.slf4j:slf4j-api:1.7.13'
+  testCompile 'junit:junit:4.12'
+}
