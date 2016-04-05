@@ -26,6 +26,10 @@ public class Connection implements java.sql.Connection {
   
   private GitRepository repo;
   
+  protected GitRepository getRepo() {
+    return this.repo;
+  }
+  
   public Connection(String path, Properties props) throws IOException {
     this.repo = GitRepository.getInstance(new File(path));
   }

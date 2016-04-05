@@ -4,24 +4,57 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public abstract class BaseMetaData implements ResultSetMetaData {
-  
-  protected abstract String[] getColNmaes(); 
 
+  public abstract ColumnMetaData[] getColumnDefs();
+  
+  public ColumnMetaData getColumnDef(int column) {
+    return this.getColumnDefs()[column];
+  }
+  
+  public int findColumn(String columnLabel) {
+    ColumnMetaData[] columnDefs = getColumnDefs();
+    for (int i = 0; i < columnDefs.length; i++) {
+      if (columnDefs[i].getName().equals(columnLabel)){
+        return i;
+      }
+    }
+    return -1;
+  }
+  
   @Override
   public int getColumnCount() throws SQLException {
-    return this.getColNmaes().length;
+    return this.getColumnDefs().length;
   }
 
   @Override
   public String getColumnLabel(int column) throws SQLException {
-    return this.getColNmaes()[column];
+    return this.getColumnDef(column).getName();
   }
 
   @Override
   public String getColumnName(int column) throws SQLException {
-    return this.getColNmaes()[column];
+    return this.getColumnDef(column).getName();
   }
   
+  @Override
+  public int isNullable(int column) throws SQLException {
+    return this.getColumnDef(column).getNullable();
+  }
+
+  @Override
+  public int getColumnType(int column) throws SQLException {
+    return this.getColumnDef(column).getType();
+  }
+
+  @Override
+  public String getColumnTypeName(int column) throws SQLException {
+    return this.getColumnDef(column).getTypeName();
+  }
+
+  @Override
+  public String getColumnClassName(int column) throws SQLException {
+    return this.getColumnDef(column).getClassName();
+  }
   
   @Override
   public <T> T unwrap(Class<T> iface) throws SQLException {

@@ -1,39 +1,38 @@
 package jgitdbc.metadata;
 
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 
-
 public class Branches extends BaseMetaData {
-
-  @Override
-  protected String[] getColNmaes() {
-    return new String[]{"name", "full_name", "hash"};
+  
+  private Branches(){
+    
   }
-
+  public static final Branches INSTANCE = new Branches();
+  
+  static final String TABLE_NAME = "branches";
+  
+  private static final ColumnMetaData[] COL_DEFS = {
+    new ColumnMetaData("name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+    new ColumnMetaData("full_name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+    new ColumnMetaData("hash", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls)};
+  
   @Override
-  public int isNullable(int column) throws SQLException {
-    return 0;
+  public ColumnMetaData[] getColumnDefs(){
+    return COL_DEFS;
   }
 
   @Override
   public String getTableName(int column) throws SQLException {
-    return "branches";
+    return TABLE_NAME;
   }
-
-  @Override
-  public int getColumnType(int column) throws SQLException {
-    return Types.VARCHAR;
-  }
-
-  @Override
-  public String getColumnTypeName(int column) throws SQLException {
-    return "VARCHAR";
-  }
-
-  @Override
-  public String getColumnClassName(int column) throws SQLException {
-    return String.class.getName();
+  
+  public static ResultRow createRow(
+      String name, 
+      String full_name, 
+      String hash){
+    return new ResultRow(name, full_name, hash);
   }
   
 }

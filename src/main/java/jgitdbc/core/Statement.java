@@ -1,9 +1,7 @@
 package jgitdbc.core;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
-
 
 public class Statement implements java.sql.Statement {
 
@@ -15,9 +13,12 @@ public class Statement implements java.sql.Statement {
 
   @Override
   public java.sql.ResultSet executeQuery(String sql) throws SQLException {
-    return new ResultSet(this);
+    
+    Parser parser = new Parser(this, sql);
+    
+    return parser.getResultSet();
   }
-  
+
   @Override
   public void close() throws SQLException {
   }
@@ -31,7 +32,7 @@ public class Statement implements java.sql.Statement {
   public Connection getConnection() throws SQLException {
     return this.connection;
   }
-  
+
   // unsupported below all.
 
   @Override

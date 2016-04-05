@@ -23,40 +23,34 @@ import java.util.List;
 import java.util.Map;
 
 import jgitdbc.metadata.BaseMetaData;
-import jgitdbc.metadata.Branches;
+import jgitdbc.metadata.ResultRow;
 
 public class ResultSet implements java.sql.ResultSet {
+  private Iterator<ResultRow> itr;
   
-  private List<Row> all;
-  
-  private Iterator<Row> itr;
-  
-  private Row current;
+  private ResultRow current;
   
   private BaseMetaData metaData;
-  
-  private class Row {
-    
-    public String getString(int i) {
-      return null;
-    }
-    
-    
-  }
 
   private Statement statement;
 
-  public ResultSet(Statement statement) {
+  public ResultSet(Statement statement, BaseMetaData metaData, List<ResultRow> rows) {
     this.statement = statement;
     
+    this.itr = rows.iterator();
     
-    
-    this.metaData = new Branches();
+    this.metaData = metaData;
   }
 
   @Override
   public boolean next() throws SQLException {
-    return this.itr.hasNext();
+    ResultRow next = null;
+    if (this.itr.hasNext()){
+      next = this.itr.next();
+    }
+    
+    this.current = next;
+    return this.current != null;
   }
 
   @Override
@@ -71,8 +65,7 @@ public class ResultSet implements java.sql.ResultSet {
 
   @Override
   public String getString(int columnIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
+    return this.current.getString(columnIndex);
   }
 
   @Override
@@ -124,8 +117,7 @@ public class ResultSet implements java.sql.ResultSet {
 
   @Override
   public int findColumn(String columnLabel) throws SQLException {
-    // TODO Auto-generated method stub
-    return 0;
+    return this.metaData.findColumn(columnLabel);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package jgitdbc;
 
+import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
@@ -7,25 +8,40 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-public class Driver implements java.sql.Driver {
+import jgitdbc.core.Connection;
 
+public class Driver implements java.sql.Driver {
+  
+  static {
+    try {
+      register();
+    } catch (SQLException e) {
+      throw new ExceptionInInitializerError(e);
+    }
+  }
+
+  private static final String PREFIX = "jdbc:jgitql:";
+  
   private static Driver registeredDriver;
 
   @Override
   public java.sql.Connection connect(String url, Properties info) throws SQLException {
     Properties defaults = new Properties();
 
-    if (!url.startsWith("jdbc:gitql:")) {
+    if (!url.startsWith(PREFIX)) {
       return null;
     }
     
-    return new Connection(url, defaults);
+    try {
+      return new Connection(url.substring(PREFIX.length()), defaults);
+    } catch (IOException e) {
+      throw new SQLException(e);
+    }
   }
 
   @Override
   public boolean acceptsURL(String url) throws SQLException {
-    // TODO Auto-generated method stub
-    return false;
+    return true;
   }
 
   @Override
