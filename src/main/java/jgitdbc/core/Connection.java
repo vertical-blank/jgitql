@@ -109,7 +109,7 @@ public class Connection implements java.sql.Connection {
 
   @Override
   public void setAutoCommit(boolean autoCommit) throws SQLException {
-    throw new UnsupportedOperationException();
+    //throw new UnsupportedOperationException();
   }
 
   @Override

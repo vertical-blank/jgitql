@@ -107,7 +107,7 @@ public class Statement implements java.sql.Statement {
 
   @Override
   public boolean execute(String sql) throws SQLException {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("execuuuuuuuuuuuuuuuuuuuuuuuuuuute");
   }
 
   @Override
