@@ -15,6 +15,7 @@ import java.util.Map;
 import jgitdbc.metadata.BaseMetaData;
 import jgitdbc.metadata.Branches;
 import jgitdbc.metadata.Commits;
+import jgitdbc.metadata.Files;
 import jgitdbc.metadata.ResultRow;
 import jgitdbc.metadata.Tags;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
@@ -165,6 +166,24 @@ public class Parser {
             commit.getFullMessage(),
             (long)commit.getTime() * 1000)
           );
+        }
+
+        return rows;
+      }
+    });
+    
+
+    listFuncs.put("files", new ListFunction() {
+      @Override
+      public BaseMetaData getMetaData() { return Commits.INSTANCE; }
+      @Override
+      public List<ResultRow> getRows(GitRepository repo, PlainSelect select) throws IOException {
+        List<ResultRow> rows = new ArrayList<ResultRow>();
+
+        for (Commit commit : repo.listCommits()) {
+          for (String path : commit.listFiles()) {
+            rows.add(Files.createRow(commit.getObjectId().getName(), path));
+          }
         }
 
         return rows;
