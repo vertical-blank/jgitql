@@ -3,6 +3,7 @@ package jgitdbc.metadata;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.sql.Date;
 
 public class Commits extends BaseMetaData {
   
@@ -20,7 +21,9 @@ public class Commits extends BaseMetaData {
     new ColumnMetaData("committer_email", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
     new ColumnMetaData("hash", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
     new ColumnMetaData("message", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
-    new ColumnMetaData("full_message", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls)};
+    new ColumnMetaData("full_message", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+    new ColumnMetaData("date", Types.TIMESTAMP, java.util.Date.class, ResultSetMetaData.columnNoNulls)
+  };
   
   @Override
   public ColumnMetaData[] getColumnDefs(){
@@ -39,8 +42,18 @@ public class Commits extends BaseMetaData {
       String committer_email, 
       String hash, 
       String message, 
-      String full_message){
-    return new ResultRow(author, author_email, committer, committer_email, hash, message, full_message);
+      String full_message,
+      long time){
+    return new ResultRow(
+      author,
+      author_email,
+      committer,
+      committer_email,
+      hash,
+      message,
+      full_message,
+      new Date(time)
+    );
   }
   
 }

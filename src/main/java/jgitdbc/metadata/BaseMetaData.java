@@ -8,7 +8,7 @@ public abstract class BaseMetaData implements ResultSetMetaData {
   public abstract ColumnMetaData[] getColumnDefs();
   
   public ColumnMetaData getColumnDef(int column) {
-    return this.getColumnDefs()[column];
+    return this.getColumnDefs()[column - 1];
   }
   
   public int findColumn(String columnLabel) {
