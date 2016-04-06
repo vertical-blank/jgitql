@@ -92,7 +92,11 @@ public class Parser {
 
         List<Branch> listBranches = repo.listBranches();
         for (Branch branch : listBranches) {
-          rows.add(Branches.createRow(branch.name, "refs/tags/" + branch.name, branch.head().getObjectId().getName()));
+          rows.add(Branches.createRow(
+            branch.name,
+            "refs/tags/" + branch.name,
+            branch.head().getObjectId().getName())
+          );
         }
 
         return rows;
@@ -107,7 +111,11 @@ public class Parser {
 
         List<Tag> listTags = repo.listTags();
         for (Tag tag : listTags) {
-          rows.add(Tags.createRow(tag.name, "refs/tags/" + tag.name, tag.getCommit().getObjectId().getName()));
+          rows.add(Tags.createRow(
+            tag.name,
+            "refs/tags/" + tag.name,
+            tag.getCommit().getObjectId().getName())
+          );
         }
 
         return rows;
@@ -124,8 +132,16 @@ public class Parser {
         for (Commit commit : listCommits) {
           PersonIdent author = commit.getAuthor();
           PersonIdent committer = commit.getCommitter();
-          rows.add(Commits.createRow(author.getName(), author.getEmailAddress(), committer.getName(),
-              committer.getEmailAddress(), commit.getObjectId().getName(), commit.getMessage(), commit.getFullMessage()));
+          rows.add(Commits.createRow(
+            author.getName(),
+            author.getEmailAddress(),
+            committer.getName(),
+            committer.getEmailAddress(),
+            commit.getObjectId().getName(),
+            commit.getMessage(),
+            commit.getFullMessage(),
+            (long)commit.getTime() * 1000)
+          );
         }
 
         return rows;
@@ -133,3 +149,4 @@ public class Parser {
     });
   }
 }
+

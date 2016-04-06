@@ -8,6 +8,15 @@ repositories {
 }
 
 
+targetCompatibility = '1.7'
+sourceCompatibility = '1.7'
+
+jar {
+  from {
+    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+  exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+}
 
 dependencies {
   compile 'com.github.yohei224:gristle:0.0.1'

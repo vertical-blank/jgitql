@@ -6,6 +6,7 @@ import java.sql.SQLWarning;
 public class Statement implements java.sql.Statement {
 
   private Connection connection;
+  private java.sql.ResultSet resultSet;
 
   public Statement(Connection connection) {
     this.connection = connection;
@@ -107,12 +108,16 @@ public class Statement implements java.sql.Statement {
 
   @Override
   public boolean execute(String sql) throws SQLException {
-    throw new UnsupportedOperationException();
+    Parser parser = new Parser(this, sql);
+    
+    resultSet = parser.getResultSet();
+    
+    return true;
   }
 
   @Override
-  public ResultSet getResultSet() throws SQLException {
-    throw new UnsupportedOperationException();
+  public java.sql.ResultSet getResultSet() throws SQLException {
+    return this.resultSet;
   }
 
   @Override
