@@ -70,19 +70,19 @@ public class Parser {
       for (SelectItem selectItem : selectItems) {
         System.out.println(selectItem.toString());
       }
-      
-      WhereExpressionVisiter whereExpressionVisiter = new WhereExpressionVisiter();
-      select.getWhere().accept(whereExpressionVisiter);
-      Expression expression = whereExpressionVisiter.getExpression();
 
       String tableName = fromItem.toString().toLowerCase();
       
       ListFunction listFunction = listFuncs.get(tableName);
       
       List<ResultRow> rows = listFunction.getRows(repo, select);
-      
-      for (ResultRow resultRow : rows) {
-        expression.eval(resultRow);
+      WhereExpressionVisiter whereExpressionVisiter = new WhereExpressionVisiter();
+      if (select.getWhere() != null){
+        select.getWhere().accept(whereExpressionVisiter);
+        Expression expression = whereExpressionVisiter.getExpression();
+        for (ResultRow resultRow : rows) {
+          expression.eval(resultRow);
+        }
       }
 
       Limit limit = select.getLimit();
@@ -175,7 +175,7 @@ public class Parser {
 
     listFuncs.put("files", new ListFunction() {
       @Override
-      public BaseMetaData getMetaData() { return Commits.INSTANCE; }
+      public BaseMetaData getMetaData() { return Files.INSTANCE; }
       @Override
       public List<ResultRow> getRows(GitRepository repo, PlainSelect select) throws IOException {
         List<ResultRow> rows = new ArrayList<ResultRow>();
