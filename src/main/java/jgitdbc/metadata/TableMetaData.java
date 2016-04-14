@@ -60,14 +60,14 @@ public abstract class TableMetaData implements ResultSetMetaData {
     return this.getRetrieveColumnDefs()[column - 1];
   }
 
-  public int findColumn(String columnLabel) {
+  public int findColumn(String columnLabel) throws SQLException {
     ColumnMetaData[] columnDefs = getRetrieveColumnDefs();
     for (int i = 0; i < columnDefs.length; i++) {
       if (columnDefs[i].getName().equals(columnLabel)) {
         return i + 1;
       }
     }
-    return -1;
+    throw new SQLException("No such column: " + columnLabel);
   }
 
   private List<Integer> colIndexes;

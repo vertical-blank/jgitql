@@ -100,7 +100,7 @@ public class Parser {
   }
 
   interface Expression {
-    boolean eval(ResultRow row);
+    boolean eval(ResultRow row) throws SQLException;
   }
 
   enum CompareOperator {
@@ -133,7 +133,7 @@ public class Parser {
       return this.stringValue != null ? this.stringValue : String.valueOf(this.longValue);
     }
 
-    public boolean eval(ResultRow row) {
+    public boolean eval(ResultRow row) throws SQLException {
       switch (this.opr) {
       case EQUALS:
         return row.getString(this.column.getColumnName()).equals(this.getValue());
@@ -160,7 +160,7 @@ public class Parser {
       this.right = right;
     }
 
-    public boolean eval(ResultRow row) {
+    public boolean eval(ResultRow row) throws SQLException {
       switch (this.opr) {
       case AND:
         return this.left.eval(row) && this.right.eval(row);

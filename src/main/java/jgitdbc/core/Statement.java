@@ -16,10 +16,7 @@ public class Statement implements java.sql.Statement {
 
   @Override
   public java.sql.ResultSet executeQuery(String sql) throws SQLException {
-    
-    Parser parser = new Parser(this, sql);
-    
-    return parser.getResultSet();
+    return new Parser(this, sql).getResultSet();
   }
 
   @Override

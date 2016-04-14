@@ -1,5 +1,6 @@
 package jgitdbc.metadata;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
 public class ResultRow {
@@ -18,7 +19,7 @@ public class ResultRow {
     return this.colValues[columnNumber - 1];
   }
   
-  public String getString(String columnName) {
+  public String getString(String columnName) throws SQLException {
     return this.getString(this.meta.findColumn(columnName));
   }
   
