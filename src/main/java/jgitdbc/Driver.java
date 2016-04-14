@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import jgitdbc.core.Connection;
 
@@ -94,6 +96,12 @@ public class Driver implements java.sql.Driver {
    */
   public static boolean isRegistered() {
     return registeredDriver != null;
+  }
+
+  @Override
+  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }
