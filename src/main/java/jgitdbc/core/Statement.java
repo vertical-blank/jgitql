@@ -1,9 +1,11 @@
 package jgitdbc.core;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 
 import jgitdbc.core.parser.Parser;
+import net.sf.jsqlparser.JSQLParserException;
 
 public class Statement implements java.sql.Statement {
 
@@ -16,7 +18,11 @@ public class Statement implements java.sql.Statement {
 
   @Override
   public java.sql.ResultSet executeQuery(String sql) throws SQLException {
-    return new Parser(this, sql).getResultSet();
+    try {
+      return new Parser(this, sql).getResultSet();
+    } catch (IOException | JSQLParserException e) {
+      throw new SQLException(e);
+    }
   }
 
   @Override
@@ -109,7 +115,11 @@ public class Statement implements java.sql.Statement {
   public boolean execute(String sql) throws SQLException {
     Parser parser = new Parser(this, sql);
     
-    resultSet = parser.getResultSet();
+    try {
+      resultSet = parser.getResultSet();
+    } catch (IOException | JSQLParserException e) {
+      throw new SQLException(e);
+    }
     
     return true;
   }

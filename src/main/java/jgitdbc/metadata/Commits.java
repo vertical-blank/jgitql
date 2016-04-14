@@ -6,14 +6,21 @@ import gristle.GitRepository.Commit;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
+import jgitdbc.core.parser.Parser.Expression;
+import net.sf.jsqlparser.statement.select.OrderByElement;
 
 import org.eclipse.jgit.lib.PersonIdent;
 
 public class Commits extends TableMetaData {
   public static final String TABLE_NAME = "commits";
+  
+  private static final TableMetaData ALL = new Commits();
+  
   public Commits() {
     super(TABLE_NAME);
   }
@@ -35,8 +42,8 @@ public class Commits extends TableMetaData {
   }
   
   @Override
-  public List<ResultRow> getRows(GitRepository repo) throws IOException {
-    List<ResultRow> rows = new ArrayList<ResultRow>();
+  public List<ResultRow> getRows(GitRepository repo, Expression expression, List<OrderByElement> orderByElements) throws IOException, SQLException {
+    List<ResultRow> temp = new ArrayList<ResultRow>();
 
     List<Commit> listCommits = repo.listCommits();
     for (Commit commit : listCommits) {
@@ -53,10 +60,11 @@ public class Commits extends TableMetaData {
         commit.getFullMessage(),
         new Date((long)commit.getTime() * 1000)
       };
-      rows.add(new ResultRow(this, filterColumns(allVals)));
+      temp.add(new ResultRow(ALL, allVals));
     }
-
-    return rows;
+    
+    temp.sort(new RowComparator(orderByElements));
+    return filterRowsAndCols(temp, expression);
   }
 
 }

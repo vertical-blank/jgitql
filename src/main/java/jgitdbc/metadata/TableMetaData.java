@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jgitdbc.core.parser.Parser.Expression;
+import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
 public abstract class TableMetaData implements ResultSetMetaData {
@@ -39,12 +42,12 @@ public abstract class TableMetaData implements ResultSetMetaData {
 
   private ColumnMetaData[] getColumnDefsImpl() {
     List<SelectItem> selectItems = this.selectItems;
-    int size = selectItems.size();
 
-    boolean allCols = (size == 1 && selectItems.get(0).toString().equals("*"));
+    boolean allCols = selectItems == null || (selectItems.size() == 1 && selectItems.get(0).toString().equals("*"));
     if (allCols) {
       return this.getAllColumnDefs();
     }
+    int size = selectItems.size();
 
     Map<String, ColumnMetaData> mapOfColumnDefByName = this.getMapOfAllColumnDefByName();
 
@@ -116,7 +119,53 @@ public abstract class TableMetaData implements ResultSetMetaData {
     return this.mapOfAllColumnDefByName;
   }
 
-  public abstract List<ResultRow> getRows(GitRepository repo) throws IOException;
+  public abstract List<ResultRow> getRows(GitRepository repo, Expression expression, List<OrderByElement> orderByElements) throws IOException, SQLException;
+  
+  protected List<ResultRow> filterRowsAndCols(List<ResultRow> rows, Expression expression) throws SQLException{
+    List<ResultRow> ret = new ArrayList<ResultRow>();
+    for (ResultRow resultRow : rows) {
+      if (expression == null || expression.eval(resultRow)){
+        ret.add(new ResultRow(this, filterColumns(resultRow.getColValues())));
+      }
+    }
+    return ret;
+  }
+  
+  protected static class RowComparator implements Comparator<ResultRow> {
+    private SQLException ex;
+    private List<OrderByElement> orderByElements;
+    
+    public RowComparator(List<OrderByElement> orderByElements){
+      this.orderByElements = orderByElements;
+    }
+
+    @Override
+    public int compare(ResultRow o1, ResultRow o2) {
+      for (OrderByElement orderByElement : this.orderByElements) {
+        String col = orderByElement.getExpression().toString();
+        int compareTo = 0;
+        try {
+          compareTo = o1.getString(col).compareTo(o2.getString(col)) * (orderByElement.isAsc() ? 1 : -1);
+        } catch (SQLException ex) {
+          this.setEx(ex);
+        }
+        if (compareTo != 0){
+          return compareTo;
+        }
+      }
+      
+      return 0;
+    }
+
+    public SQLException getEx() {
+      return ex;
+    }
+
+    public void setEx(SQLException ex) {
+      this.ex = ex;
+    }
+  }
+  
 
   @Override
   public String getTableName(int i) {

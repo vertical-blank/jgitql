@@ -5,13 +5,19 @@ import gristle.GitRepository.Branch;
 
 import java.io.IOException;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import jgitdbc.core.parser.Parser.Expression;
+import net.sf.jsqlparser.statement.select.OrderByElement;
+
 public class Branches extends TableMetaData {
   static final String TABLE_NAME = "branches";
-
+  
+  private static final TableMetaData ALL = new Branches();
+  
   public Branches() {
     super(TABLE_NAME);
   }
@@ -27,16 +33,17 @@ public class Branches extends TableMetaData {
   }
 
   @Override
-  public List<ResultRow> getRows(GitRepository repo) throws IOException {
-    List<ResultRow> rows = new ArrayList<ResultRow>();
+  public List<ResultRow> getRows(GitRepository repo, Expression expression, List<OrderByElement> orderByElements) throws IOException, SQLException {
+    List<ResultRow> temp = new ArrayList<ResultRow>();
 
     List<Branch> listBranches = repo.listBranches();
     for (Branch branch : listBranches) {
       Object[] allVals = new Object[] { branch.name, "refs/tags/" + branch.name, branch.head().getObjectId().getName() };
-      rows.add(new ResultRow(this, filterColumns(allVals)));
+      temp.add(new ResultRow(ALL, allVals));
     }
-
-    return rows;
+    
+    temp.sort(new RowComparator(orderByElements));
+    return filterRowsAndCols(temp, expression);
   }
 
 }

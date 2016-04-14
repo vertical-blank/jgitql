@@ -12,11 +12,11 @@ public class ResultRow {
   
   ResultRow(TableMetaData meta, Object ... colValues) {
     this.meta = meta;
-    this.colValues = colValues;
+    this.setColValues(colValues);
   }
 
   private Object getColValue(int columnNumber) {
-    return this.colValues[columnNumber - 1];
+    return this.getColValues()[columnNumber - 1];
   }
   
   public String getString(String columnName) throws SQLException {
@@ -30,5 +30,13 @@ public class ResultRow {
       return formatter.format(val);
     }
     return String.valueOf(val);
+  }
+
+  public Object[] getColValues() {
+    return colValues;
+  }
+
+  public void setColValues(Object[] colValues) {
+    this.colValues = colValues;
   }
 }

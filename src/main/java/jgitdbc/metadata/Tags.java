@@ -5,12 +5,19 @@ import gristle.GitRepository.Tag;
 
 import java.io.IOException;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import jgitdbc.core.parser.Parser.Expression;
+import net.sf.jsqlparser.statement.select.OrderByElement;
+
 public class Tags extends TableMetaData {
   public static final String TABLE_NAME = "tags";
+  
+  private static final TableMetaData ALL = new Tags();
+  
   public Tags() {
     super(TABLE_NAME);
   }
@@ -29,9 +36,9 @@ public class Tags extends TableMetaData {
     return COL_DEFS;
   }
   @Override
-  public List<ResultRow> getRows(GitRepository repo) throws IOException {
-    List<ResultRow> rows = new ArrayList<ResultRow>();
+  public List<ResultRow> getRows(GitRepository repo, Expression expression, List<OrderByElement> orderByElements) throws IOException, SQLException {
 
+    List<ResultRow> temp = new ArrayList<ResultRow>();
     List<Tag> listTags = repo.listTags();
     for (Tag tag : listTags) {
       Object[] allVals = new Object[] {
@@ -39,10 +46,11 @@ public class Tags extends TableMetaData {
         "refs/tags/" + tag.name,
         tag.getCommit().getObjectId().getName()
       };
-      rows.add(new ResultRow(this, filterColumns(allVals)));
+      temp.add(new ResultRow(ALL, allVals));
     }
-
-    return rows;
+    
+    temp.sort(new RowComparator(orderByElements));
+    return filterRowsAndCols(temp, expression);
   }
   
 }

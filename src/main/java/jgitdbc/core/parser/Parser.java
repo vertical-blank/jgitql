@@ -2,8 +2,8 @@ package jgitdbc.core.parser;
 
 import gristle.GitRepository;
 
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,6 +12,7 @@ import jgitdbc.core.Statement;
 import jgitdbc.metadata.ResultRow;
 import jgitdbc.metadata.TableMetaData;
 import jgitdbc.metadata.Tables;
+import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.Parenthesis;
@@ -43,63 +44,44 @@ public class Parser {
     this.sql = sql;
   }
 
-  public java.sql.ResultSet getResultSet() throws SQLException {
+  public java.sql.ResultSet getResultSet() throws SQLException, IOException, JSQLParserException {
     final GitRepository repo = this.statement.getConnection().getRepo();
 
-    try {
-      Select selectStatement = (Select) CCJSqlParserUtil.parse(sql);
-      PlainSelect select = (PlainSelect) selectStatement.getSelectBody();
-
-      FromItem fromItem = select.getFromItem();
-      String tableName = fromItem.toString().toLowerCase();
-
-      List<SelectItem> selectItems = select.getSelectItems();
-
-      TableMetaData metaData = Tables.get(tableName, selectItems);
-
-      List<ResultRow> rowsAll = metaData.getRows(repo);
-
-      List<ResultRow> rows = new ArrayList<ResultRow>();
-
+    Select selectStatement = (Select) CCJSqlParserUtil.parse(sql);
+    PlainSelect select = (PlainSelect) selectStatement.getSelectBody();
+    
+    FromItem fromItem = select.getFromItem();
+    String tableName = fromItem.toString().toLowerCase();
+    
+    List<SelectItem> selectItems = select.getSelectItems();
+    
+    TableMetaData metaData = Tables.get(tableName, selectItems);
+    
+    Expression expression = null;
+    if (select.getWhere() != null) {
       WhereExpressionVisiter whereExpressionVisiter = new WhereExpressionVisiter();
-      if (select.getWhere() != null) {
-        select.getWhere().accept(whereExpressionVisiter);
-        Expression expression = whereExpressionVisiter.getExpression();
-
-        for (ResultRow resultRow : rowsAll) {
-          if (expression.eval(resultRow)) {
-            rows.add(resultRow);
-          }
-        }
-      } else {
-        rows = rowsAll;
-      }
-
-      List<OrderByElement> orderByElements = select.getOrderByElements();
-      if (orderByElements == null) {
-        orderByElements = Collections.emptyList();
-      }
-      for (OrderByElement orderByElement : orderByElements) {
-        System.out.println(orderByElement.getExpression());
-        System.out.println(orderByElement.isAsc());
-      }
-
-      Limit limit = select.getLimit();
-      if (limit != null) {
-        long rowCount = limit.getRowCount();
-        if (rows.size() >= rowCount) {
-          rows = rows.subList(0, (int) rowCount);
-        }
-      }
-
-      return new ResultSet(this.statement, metaData, rows);
-
-    } catch (Exception e) {
-      throw new SQLException(e);
+      select.getWhere().accept(whereExpressionVisiter);
+      expression = whereExpressionVisiter.getExpression();
     }
+    
+    List<OrderByElement> orderByElements = select.getOrderByElements();
+    if (orderByElements == null) {
+      orderByElements = Collections.emptyList();
+    }
+    List<ResultRow> rows = metaData.getRows(repo, expression, orderByElements);
+    
+    Limit limit = select.getLimit();
+    if (limit != null) {
+      long rowCount = limit.getRowCount();
+      if (rows.size() >= rowCount) {
+        rows = rows.subList(0, (int) rowCount);
+      }
+    }
+    
+    return new ResultSet(this.statement, metaData, rows);
   }
 
-  interface Expression {
+  public interface Expression {
     boolean eval(ResultRow row) throws SQLException;
   }
 
