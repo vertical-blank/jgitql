@@ -64,7 +64,7 @@ public abstract class TableMetaData implements ResultSetMetaData {
     ColumnMetaData[] columnDefs = getRetrieveColumnDefs();
     for (int i = 0; i < columnDefs.length; i++) {
       if (columnDefs[i].getName().equals(columnLabel)) {
-        return i;
+        return i + 1;
       }
     }
     return -1;

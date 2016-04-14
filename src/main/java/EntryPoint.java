@@ -14,7 +14,7 @@ public class EntryPoint {
     Class.forName("jgitdbc.Driver");
     Connection con = DriverManager.getConnection("jdbc:jgitql:C:\\Users\\P000163\\turqey_gh\\.git");
     Statement statement = con.createStatement();
-    ResultSet resultSet = statement.executeQuery("SELECT * FROM commits ");
+    ResultSet resultSet = statement.executeQuery("SELECT * FROM commits");
     ResultSetMetaData metaData = resultSet.getMetaData();
     
     int columnCount = metaData.getColumnCount();

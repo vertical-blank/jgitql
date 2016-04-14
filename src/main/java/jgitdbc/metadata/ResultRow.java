@@ -15,12 +15,11 @@ public class ResultRow {
   }
 
   private Object getColValue(int columnNumber) {
-    //this.meta.getRetrieveColumnDefs()
     return this.colValues[columnNumber - 1];
   }
   
   public String getString(String columnName) {
-    return this.getString(this.meta.findColumn(columnName) + 1);
+    return this.getString(this.meta.findColumn(columnName));
   }
   
   public String getString(int columnNumber) {
