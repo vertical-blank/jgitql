@@ -18,7 +18,6 @@ import java.sql.Savepoint;
 import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Executor;
 
 import jgitdbc.metadata.DatabaseMetaData;
 
@@ -284,31 +283,6 @@ public class Connection implements java.sql.Connection {
 
   @Override
   public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public void setSchema(String schema) throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public String getSchema() throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public void abort(Executor executor) throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public int getNetworkTimeout() throws SQLException {
     throw new UnsupportedOperationException();
   }
 

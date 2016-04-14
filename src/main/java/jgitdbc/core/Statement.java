@@ -230,14 +230,4 @@ public class Statement implements java.sql.Statement {
     throw new UnsupportedOperationException();
   }
 
-  @Override
-  public void closeOnCompletion() throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public boolean isCloseOnCompletion() throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
 }

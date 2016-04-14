@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import jgitdbc.core.Connection;
 
@@ -27,7 +25,7 @@ public class Driver implements java.sql.Driver {
   @Override
   public java.sql.Connection connect(String url, Properties info) throws SQLException {
     Properties defaults = new Properties();
-
+    
     if (!url.startsWith(PREFIX)) {
       return null;
     }
@@ -63,11 +61,6 @@ public class Driver implements java.sql.Driver {
   public boolean jdbcCompliant() {
     // TODO Auto-generated method stub
     return false;
-  }
-
-  @Override
-  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-    return null;
   }
 
   public static void register() throws SQLException {
