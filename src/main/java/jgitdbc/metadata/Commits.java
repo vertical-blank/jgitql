@@ -1,18 +1,22 @@
 package jgitdbc.metadata;
 
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Types;
+import gristle.GitRepository;
+import gristle.GitRepository.Commit;
+
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.ResultSetMetaData;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Commits extends BaseMetaData {
-  
-  private Commits(){
-    
+import org.eclipse.jgit.lib.PersonIdent;
+
+public class Commits extends TableMetaData {
+  public static final String TABLE_NAME = "commits";
+  private Commits() {
+    super(TABLE_NAME);
   }
-  public static final Commits INSTANCE = new Commits();
-
-  private static final String TABLE_NAME = "commits";
   
   private static final ColumnMetaData[] COL_DEFS = {
     new ColumnMetaData("author", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
@@ -26,13 +30,31 @@ public class Commits extends BaseMetaData {
   };
   
   @Override
-  public ColumnMetaData[] getColumnDefs(){
+  public ColumnMetaData[] getAllColumnDefsImpl(){
     return COL_DEFS;
   }
-
+  
   @Override
-  public String getTableName(int column) throws SQLException {
-    return TABLE_NAME;
+  public List<ResultRow> getRows(GitRepository repo) throws IOException {
+    List<ResultRow> rows = new ArrayList<ResultRow>();
+
+    List<Commit> listCommits = repo.listCommits();
+    for (Commit commit : listCommits) {
+      PersonIdent author = commit.getAuthor();
+      PersonIdent committer = commit.getCommitter();
+      rows.add(Commits.createRow(
+        author.getName(),
+        author.getEmailAddress(),
+        committer.getName(),
+        committer.getEmailAddress(),
+        commit.getObjectId().getName(),
+        commit.getMessage(),
+        commit.getFullMessage(),
+        (long)commit.getTime() * 1000)
+      );
+    }
+
+    return rows;
   }
   
   public static ResultRow createRow(

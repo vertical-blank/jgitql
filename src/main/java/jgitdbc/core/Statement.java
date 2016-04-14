@@ -232,14 +232,12 @@ public class Statement implements java.sql.Statement {
 
   @Override
   public void closeOnCompletion() throws SQLException {
-    // TODO Auto-generated method stub
-    
+    throw new UnsupportedOperationException(); 
   }
 
   @Override
   public boolean isCloseOnCompletion() throws SQLException {
-    // TODO Auto-generated method stub
-    return false;
+    throw new UnsupportedOperationException();
   }
 
 }

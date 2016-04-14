@@ -1,17 +1,19 @@
 package jgitdbc.metadata;
 
+import gristle.GitRepository;
+import gristle.GitRepository.Commit;
+
+import java.io.IOException;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Files extends BaseMetaData {
-  
-  private Files(){
-    
+public class Files extends TableMetaData {
+  public static final String TABLE_NAME = "files";
+  private Files() {
+    super(TABLE_NAME);
   }
-  public static final Files INSTANCE = new Files();
-
-  private static final String TABLE_NAME = "files";
   
   private static final ColumnMetaData[] COL_DEFS = {
     new ColumnMetaData("commit_id", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
@@ -19,13 +21,20 @@ public class Files extends BaseMetaData {
   };
   
   @Override
-  public ColumnMetaData[] getColumnDefs(){
+  public ColumnMetaData[] getAllColumnDefsImpl(){
     return COL_DEFS;
   }
-
   @Override
-  public String getTableName(int column) throws SQLException {
-    return TABLE_NAME;
+  public List<ResultRow> getRows(GitRepository repo) throws IOException {
+    List<ResultRow> rows = new ArrayList<ResultRow>();
+
+    for (Commit commit : repo.listCommits()) {
+      for (String path : commit.listFiles()) {
+        rows.add(Files.createRow(commit.getObjectId().getName(), path));
+      }
+    }
+
+    return rows;
   }
   
   public static ResultRow createRow(

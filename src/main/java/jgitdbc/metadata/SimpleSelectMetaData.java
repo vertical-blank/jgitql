@@ -1,11 +1,50 @@
 package jgitdbc.metadata;
 
+import gristle.GitRepository;
+
+import java.io.IOException;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public abstract class BaseMetaData implements ResultSetMetaData {
+public abstract class SimpleSelectMetaData implements ResultSetMetaData {
+  
+  private ColumnMetaData[] columnDefs;
+  private Map<String, ColumnMetaData> mapOfColumnDefByName;
+  public final String tableName;
+  
+  public SimpleSelectMetaData(String tableName) {
+    this.tableName = tableName;
+  }
+  
+  public abstract ColumnMetaData[] getColumnDefsImpl();
 
-  public abstract ColumnMetaData[] getColumnDefs();
+  public abstract List<ResultRow> getRows(GitRepository repo) throws IOException;
+  
+  @Override
+  public String getTableName(int i){
+    return tableName;
+  }
+
+  public ColumnMetaData[] getColumnDefs() {
+    if (this.columnDefs == null){
+      this.columnDefs = getColumnDefsImpl();
+    }
+    return this.columnDefs;
+  }
+  
+  public Map<String, ColumnMetaData> getMapOfColumnDefByName() {
+    if (this.mapOfColumnDefByName == null){
+      Map<String, ColumnMetaData> map = new HashMap<String, ColumnMetaData>();
+      for (ColumnMetaData def : this.getColumnDefs()) {
+        map.put(def.getName(), def);
+      }
+      this.mapOfColumnDefByName = map;
+    }
+    return this.mapOfColumnDefByName;
+  }
   
   public ColumnMetaData getColumnDef(int column) {
     return this.getColumnDefs()[column - 1];

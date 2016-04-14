@@ -1,17 +1,19 @@
 package jgitdbc.metadata;
 
+import gristle.GitRepository;
+import gristle.GitRepository.Tag;
+
+import java.io.IOException;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Tags extends BaseMetaData {
-  
-  private Tags(){
-    
+public class Tags extends TableMetaData {
+  public static final String TABLE_NAME = "tags";
+  public Tags() {
+    super(TABLE_NAME);
   }
-  public static final Tags INSTANCE = new Tags();
-
-  private static final String TABLE_NAME = "commits";
   
   private static final ColumnMetaData[] COL_DEFS = {
     new ColumnMetaData("author", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
@@ -23,13 +25,23 @@ public class Tags extends BaseMetaData {
     new ColumnMetaData("full_message", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls)};
   
   @Override
-  public ColumnMetaData[] getColumnDefs(){
+  public ColumnMetaData[] getAllColumnDefsImpl(){
     return COL_DEFS;
   }
-
   @Override
-  public String getTableName(int column) throws SQLException {
-    return TABLE_NAME;
+  public List<ResultRow> getRows(GitRepository repo) throws IOException {
+    List<ResultRow> rows = new ArrayList<ResultRow>();
+
+    List<Tag> listTags = repo.listTags();
+    for (Tag tag : listTags) {
+      rows.add(Tags.createRow(
+        tag.name,
+        "refs/tags/" + tag.name,
+        tag.getCommit().getObjectId().getName())
+      );
+    }
+
+    return rows;
   }
   
   public static ResultRow createRow(

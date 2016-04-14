@@ -1,23 +1,13 @@
 package jgitdbc.core;
 
 import gristle.GitRepository;
-import gristle.GitRepository.Branch;
-import gristle.GitRepository.Commit;
-import gristle.GitRepository.Tag;
 
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import jgitdbc.metadata.BaseMetaData;
-import jgitdbc.metadata.Branches;
-import jgitdbc.metadata.Commits;
-import jgitdbc.metadata.Files;
 import jgitdbc.metadata.ResultRow;
-import jgitdbc.metadata.Tags;
+import jgitdbc.metadata.SimpleSelectMetaData;
+import jgitdbc.metadata.Tables;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.Parenthesis;
@@ -38,8 +28,6 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
-import org.eclipse.jgit.lib.PersonIdent;
-
 public class Parser {
 
   private Statement statement;
@@ -56,8 +44,14 @@ public class Parser {
     try {
       Select selectStatement = (Select) CCJSqlParserUtil.parse(sql);
       PlainSelect select = (PlainSelect) selectStatement.getSelectBody();
-
+      
       FromItem fromItem = select.getFromItem();
+      String tableName = fromItem.toString().toLowerCase();
+      
+      List<SelectItem> selectItems = select.getSelectItems();
+      
+      SimpleSelectMetaData metaData = Tables.get(tableName, selectItems);
+      
       /*
       List<SelectItem> selectItems = select.getSelectItems();
       Expression where = select.getWhere();
@@ -66,16 +60,8 @@ public class Parser {
       
       //select.getWhere().accept(new ExpressionVisitor() {});
       
-      List<SelectItem> selectItems = select.getSelectItems();
-      for (SelectItem selectItem : selectItems) {
-        System.out.println(selectItem.toString());
-      }
-
-      String tableName = fromItem.toString().toLowerCase();
+      List<ResultRow> rows = metaData.getRows(repo);
       
-      ListFunction listFunction = listFuncs.get(tableName);
-      
-      List<ResultRow> rows = listFunction.getRows(repo, select);
       WhereExpressionVisiter whereExpressionVisiter = new WhereExpressionVisiter();
       if (select.getWhere() != null){
         select.getWhere().accept(whereExpressionVisiter);
@@ -93,104 +79,12 @@ public class Parser {
         }
       }
       
-      return new ResultSet(statement, listFunction.getMetaData(), rows);
+      return new ResultSet(statement, metaData, rows);
 
     } catch (Exception e) {
       throw new SQLException(e);
     }
   }
-
-  private interface ListFunction {
-    List<ResultRow> getRows(GitRepository repo, PlainSelect select) throws IOException;
-    BaseMetaData getMetaData();
-  }
-
-  private static final Map<String, ListFunction> listFuncs = new HashMap<String, ListFunction>();
-  static {
-    listFuncs.put("branches", new ListFunction() {
-      @Override
-      public BaseMetaData getMetaData() { return Branches.INSTANCE; }
-      @Override
-      public List<ResultRow> getRows(GitRepository repo, PlainSelect select) throws IOException {
-        List<ResultRow> rows = new ArrayList<ResultRow>();
-
-        List<Branch> listBranches = repo.listBranches();
-        for (Branch branch : listBranches) {
-          rows.add(Branches.createRow(
-            branch.name,
-            "refs/tags/" + branch.name,
-            branch.head().getObjectId().getName())
-          );
-        }
-
-        return rows;
-      }
-    });
-    listFuncs.put("tags", new ListFunction() {
-      @Override
-      public BaseMetaData getMetaData() { return Tags.INSTANCE; }
-      @Override
-      public List<ResultRow> getRows(GitRepository repo, PlainSelect select) throws IOException {
-        List<ResultRow> rows = new ArrayList<ResultRow>();
-
-        List<Tag> listTags = repo.listTags();
-        for (Tag tag : listTags) {
-          rows.add(Tags.createRow(
-            tag.name,
-            "refs/tags/" + tag.name,
-            tag.getCommit().getObjectId().getName())
-          );
-        }
-
-        return rows;
-      }
-    });
-    listFuncs.put("commits", new ListFunction() {
-      @Override
-      public BaseMetaData getMetaData() { return Commits.INSTANCE; }
-      @Override
-      public List<ResultRow> getRows(GitRepository repo, PlainSelect select) throws IOException {
-        List<ResultRow> rows = new ArrayList<ResultRow>();
-
-        List<Commit> listCommits = repo.listCommits();
-        for (Commit commit : listCommits) {
-          PersonIdent author = commit.getAuthor();
-          PersonIdent committer = commit.getCommitter();
-          rows.add(Commits.createRow(
-            author.getName(),
-            author.getEmailAddress(),
-            committer.getName(),
-            committer.getEmailAddress(),
-            commit.getObjectId().getName(),
-            commit.getMessage(),
-            commit.getFullMessage(),
-            (long)commit.getTime() * 1000)
-          );
-        }
-
-        return rows;
-      }
-    });
-    
-
-    listFuncs.put("files", new ListFunction() {
-      @Override
-      public BaseMetaData getMetaData() { return Files.INSTANCE; }
-      @Override
-      public List<ResultRow> getRows(GitRepository repo, PlainSelect select) throws IOException {
-        List<ResultRow> rows = new ArrayList<ResultRow>();
-
-        for (Commit commit : repo.listCommits()) {
-          for (String path : commit.listFiles()) {
-            rows.add(Files.createRow(commit.getObjectId().getName(), path));
-          }
-        }
-
-        return rows;
-      }
-    });
-  }
-  
   
   interface Expression {
     boolean eval(ResultRow row);

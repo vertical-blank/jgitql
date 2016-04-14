@@ -22,19 +22,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import jgitdbc.metadata.BaseMetaData;
 import jgitdbc.metadata.ResultRow;
+import jgitdbc.metadata.SimpleSelectMetaData;
 
 public class ResultSet implements java.sql.ResultSet {
   private Iterator<ResultRow> itr;
   
   private ResultRow current;
   
-  private BaseMetaData metaData;
+  private SimpleSelectMetaData metaData;
 
   private Statement statement;
 
-  public ResultSet(Statement statement, BaseMetaData metaData, List<ResultRow> rows) {
+  public ResultSet(Statement statement, SimpleSelectMetaData metaData, List<ResultRow> rows) {
     this.statement = statement;
     
     this.itr = rows.iterator();
@@ -981,14 +981,12 @@ public class ResultSet implements java.sql.ResultSet {
 
   @Override
   public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
+    throw new UnsupportedOperationException();
   }
 
 }
