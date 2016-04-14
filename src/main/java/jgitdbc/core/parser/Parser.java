@@ -139,7 +139,14 @@ public class Parser {
         return row.getString(this.column.getColumnName()).equals(this.getValue());
       case NOT_EQUALS:
         return !row.getString(this.column.getColumnName()).equals(this.getValue());
-      default:
+      case GREATER_EQUALS:
+        return row.getString(this.column.getColumnName()).compareTo(this.getValue()) >= 0;
+      case GREATER_THAN:
+        return row.getString(this.column.getColumnName()).compareTo(this.getValue()) > 0;
+      case LESS_EQUALS:
+        return row.getString(this.column.getColumnName()).compareTo(this.getValue()) <= 0;
+      case LESS_THAN:
+        return row.getString(this.column.getColumnName()).compareTo(this.getValue()) < 0;
       }
       return false;
     }
@@ -269,7 +276,7 @@ public class Parser {
       this.column = left.column;
       this.stringValue = right.stringValue;
       this.longValue = right.longValue;
-      this.cmpOpr = CompareOperator.LESS_THAN;
+      this.cmpOpr = CompareOperator.LESS_EQUALS;
     }
 
     public void visit(MinorThan ex) {
