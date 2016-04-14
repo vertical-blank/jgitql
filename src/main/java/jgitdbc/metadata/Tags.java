@@ -25,7 +25,7 @@ public class Tags extends TableMetaData {
     new ColumnMetaData("full_message", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls)};
   
   @Override
-  public ColumnMetaData[] getAllColumnDefsImpl(){
+  public ColumnMetaData[] getAllColumnDefs(){
     return COL_DEFS;
   }
   @Override
@@ -34,21 +34,15 @@ public class Tags extends TableMetaData {
 
     List<Tag> listTags = repo.listTags();
     for (Tag tag : listTags) {
-      rows.add(Tags.createRow(
+      Object[] allVals = new Object[] {
         tag.name,
         "refs/tags/" + tag.name,
-        tag.getCommit().getObjectId().getName())
-      );
+        tag.getCommit().getObjectId().getName()
+      };
+      rows.add(new ResultRow(this, filterColumns(allVals)));
     }
 
     return rows;
-  }
-  
-  public static ResultRow createRow(
-      String name, 
-      String full_name, 
-      String hash){
-    return new ResultRow(name, full_name, hash);
   }
   
 }

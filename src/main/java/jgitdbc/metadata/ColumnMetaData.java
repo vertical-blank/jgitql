@@ -46,32 +46,16 @@ public class ColumnMetaData {
     return nullable;
   }
 
-  public void setNullable(int nullable) {
-    this.nullable = nullable;
-  }
-
   public String getName() {
     return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public int getType() {
     return type;
   }
 
-  public void setType(int type) {
-    this.type = type;
-  }
-
   public Class<?> getClazz() {
     return clazz;
-  }
-
-  public void setClazz(Class<?> clazz) {
-    this.clazz = clazz;
   }
   
 }

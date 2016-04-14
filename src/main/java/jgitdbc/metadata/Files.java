@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Files extends TableMetaData {
   public static final String TABLE_NAME = "files";
-  private Files() {
+  public Files() {
     super(TABLE_NAME);
   }
   
@@ -21,7 +21,7 @@ public class Files extends TableMetaData {
   };
   
   @Override
-  public ColumnMetaData[] getAllColumnDefsImpl(){
+  public ColumnMetaData[] getAllColumnDefs(){
     return COL_DEFS;
   }
   @Override
@@ -30,20 +30,12 @@ public class Files extends TableMetaData {
 
     for (Commit commit : repo.listCommits()) {
       for (String path : commit.listFiles()) {
-        rows.add(Files.createRow(commit.getObjectId().getName(), path));
+        Object[] allVals = new Object[] {commit.getObjectId().getName(), path};
+        rows.add(new ResultRow(this, filterColumns(allVals)));
       }
     }
 
     return rows;
-  }
-  
-  public static ResultRow createRow(
-      String commit_id, 
-      String name){
-    return new ResultRow(
-      commit_id,
-      name
-    );
   }
   
 }

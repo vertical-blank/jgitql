@@ -3,6 +3,8 @@ package jgitdbc.core;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 
+import jgitdbc.core.parser.Parser;
+
 public class Statement implements java.sql.Statement {
 
   private Connection connection;

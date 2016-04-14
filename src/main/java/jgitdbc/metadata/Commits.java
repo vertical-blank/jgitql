@@ -14,7 +14,7 @@ import org.eclipse.jgit.lib.PersonIdent;
 
 public class Commits extends TableMetaData {
   public static final String TABLE_NAME = "commits";
-  private Commits() {
+  public Commits() {
     super(TABLE_NAME);
   }
   
@@ -30,7 +30,7 @@ public class Commits extends TableMetaData {
   };
   
   @Override
-  public ColumnMetaData[] getAllColumnDefsImpl(){
+  public ColumnMetaData[] getAllColumnDefs(){
     return COL_DEFS;
   }
   
@@ -42,7 +42,8 @@ public class Commits extends TableMetaData {
     for (Commit commit : listCommits) {
       PersonIdent author = commit.getAuthor();
       PersonIdent committer = commit.getCommitter();
-      rows.add(Commits.createRow(
+      
+      Object[] allVals = new Object[] {
         author.getName(),
         author.getEmailAddress(),
         committer.getName(),
@@ -50,32 +51,12 @@ public class Commits extends TableMetaData {
         commit.getObjectId().getName(),
         commit.getMessage(),
         commit.getFullMessage(),
-        (long)commit.getTime() * 1000)
-      );
+        new Date((long)commit.getTime() * 1000)
+      };
+      rows.add(new ResultRow(this, filterColumns(allVals)));
     }
 
     return rows;
   }
-  
-  public static ResultRow createRow(
-      String author, 
-      String author_email, 
-      String committer, 
-      String committer_email, 
-      String hash, 
-      String message, 
-      String full_message,
-      long time){
-    return new ResultRow(
-      author,
-      author_email,
-      committer,
-      committer_email,
-      hash,
-      message,
-      full_message,
-      new Date(time)
-    );
-  }
-  
+
 }

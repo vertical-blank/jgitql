@@ -11,17 +11,18 @@ import java.util.List;
 
 public class Branches extends TableMetaData {
   static final String TABLE_NAME = "branches";
-  private Branches() {
+
+  public Branches() {
     super(TABLE_NAME);
   }
-  
+
   private static final ColumnMetaData[] COL_DEFS = {
-    new ColumnMetaData("name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
-    new ColumnMetaData("full_name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
-    new ColumnMetaData("hash", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls)};
-  
+      new ColumnMetaData("name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+      new ColumnMetaData("full_name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+      new ColumnMetaData("hash", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls) };
+
   @Override
-  public ColumnMetaData[] getAllColumnDefsImpl(){
+  public ColumnMetaData[] getAllColumnDefs() {
     return COL_DEFS;
   }
 
@@ -31,21 +32,11 @@ public class Branches extends TableMetaData {
 
     List<Branch> listBranches = repo.listBranches();
     for (Branch branch : listBranches) {
-      rows.add(Branches.createRow(
-        branch.name,
-        "refs/tags/" + branch.name,
-        branch.head().getObjectId().getName())
-      );
+      Object[] allVals = new Object[] { branch.name, "refs/tags/" + branch.name, branch.head().getObjectId().getName() };
+      rows.add(new ResultRow(this, filterColumns(allVals)));
     }
 
     return rows;
   }
-  
-  public static ResultRow createRow(
-      String name, 
-      String full_name, 
-      String hash){
-    return new ResultRow(name, full_name, hash);
-  }
-  
+
 }

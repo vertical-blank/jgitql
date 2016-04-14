@@ -23,18 +23,18 @@ import java.util.List;
 import java.util.Map;
 
 import jgitdbc.metadata.ResultRow;
-import jgitdbc.metadata.SimpleSelectMetaData;
+import jgitdbc.metadata.TableMetaData;
 
 public class ResultSet implements java.sql.ResultSet {
   private Iterator<ResultRow> itr;
   
   private ResultRow current;
   
-  private SimpleSelectMetaData metaData;
+  private TableMetaData metaData;
 
   private Statement statement;
 
-  public ResultSet(Statement statement, SimpleSelectMetaData metaData, List<ResultRow> rows) {
+  public ResultSet(Statement statement, TableMetaData metaData, List<ResultRow> rows) {
     this.statement = statement;
     
     this.itr = rows.iterator();

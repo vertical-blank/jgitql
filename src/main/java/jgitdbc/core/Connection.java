@@ -26,7 +26,7 @@ public class Connection implements java.sql.Connection {
   
   private GitRepository repo;
   
-  protected GitRepository getRepo() {
+  public GitRepository getRepo() {
     return this.repo;
   }
   
