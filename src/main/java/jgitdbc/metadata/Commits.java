@@ -1,18 +1,29 @@
 package jgitdbc.metadata;
 
+import gristle.GitRepository;
+import gristle.GitRepository.Commit;
+
+import java.io.IOException;
+import java.sql.Date;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Commits extends BaseMetaData {
+import jgitdbc.core.parser.Parser.Expression;
+import net.sf.jsqlparser.statement.select.OrderByElement;
+
+import org.eclipse.jgit.lib.PersonIdent;
+
+public class Commits extends TableMetaData {
+  public static final String TABLE_NAME = "commits";
   
-  private Commits(){
-    
+  private static final TableMetaData ALL = new Commits();
+  
+  public Commits() {
+    super(TABLE_NAME);
   }
-  public static final Commits INSTANCE = new Commits();
-
-  private static final String TABLE_NAME = "commits";
   
   private static final ColumnMetaData[] COL_DEFS = {
     new ColumnMetaData("author", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
@@ -26,34 +37,34 @@ public class Commits extends BaseMetaData {
   };
   
   @Override
-  public ColumnMetaData[] getColumnDefs(){
+  public ColumnMetaData[] getAllColumnDefs(){
     return COL_DEFS;
   }
-
+  
   @Override
-  public String getTableName(int column) throws SQLException {
-    return TABLE_NAME;
+  public List<ResultRow> getRows(GitRepository repo, Expression expression, List<OrderByElement> orderByElements) throws IOException, SQLException {
+    List<ResultRow> temp = new ArrayList<ResultRow>();
+
+    List<Commit> listCommits = repo.listCommits();
+    for (Commit commit : listCommits) {
+      PersonIdent author = commit.getAuthor();
+      PersonIdent committer = commit.getCommitter();
+      
+      Object[] allVals = new Object[] {
+        author.getName(),
+        author.getEmailAddress(),
+        committer.getName(),
+        committer.getEmailAddress(),
+        commit.getObjectId().getName(),
+        commit.getMessage(),
+        commit.getFullMessage(),
+        new Date((long)commit.getTime() * 1000)
+      };
+      temp.add(new ResultRow(ALL, allVals));
+    }
+    
+    temp.sort(new RowComparator(orderByElements));
+    return filterRowsAndCols(temp, expression);
   }
-  
-  public static ResultRow createRow(
-      String author, 
-      String author_email, 
-      String committer, 
-      String committer_email, 
-      String hash, 
-      String message, 
-      String full_message,
-      long time){
-    return new ResultRow(
-      author,
-      author_email,
-      committer,
-      committer_email,
-      hash,
-      message,
-      full_message,
-      new Date(time)
-    );
-  }
-  
+
 }

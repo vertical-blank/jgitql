@@ -22,19 +22,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import jgitdbc.metadata.BaseMetaData;
 import jgitdbc.metadata.ResultRow;
+import jgitdbc.metadata.TableMetaData;
 
 public class ResultSet implements java.sql.ResultSet {
   private Iterator<ResultRow> itr;
   
   private ResultRow current;
   
-  private BaseMetaData metaData;
+  private TableMetaData metaData;
 
   private Statement statement;
 
-  public ResultSet(Statement statement, BaseMetaData metaData, List<ResultRow> rows) {
+  public ResultSet(Statement statement, TableMetaData metaData, List<ResultRow> rows) {
     this.statement = statement;
     
     this.itr = rows.iterator();

@@ -27,7 +27,7 @@ public class Driver implements java.sql.Driver {
   @Override
   public java.sql.Connection connect(String url, Properties info) throws SQLException {
     Properties defaults = new Properties();
-
+    
     if (!url.startsWith(PREFIX)) {
       return null;
     }
@@ -65,11 +65,6 @@ public class Driver implements java.sql.Driver {
     return false;
   }
 
-  @Override
-  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-    return null;
-  }
-
   public static void register() throws SQLException {
     if (isRegistered()) {
       throw new IllegalStateException("Driver is already registered. It can only be registered once.");
@@ -101,6 +96,11 @@ public class Driver implements java.sql.Driver {
    */
   public static boolean isRegistered() {
     return registeredDriver != null;
+  }
+
+  @Override
+  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    throw new UnsupportedOperationException();
   }
 
 }
