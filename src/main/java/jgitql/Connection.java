@@ -58,6 +58,11 @@ public class Connection implements java.sql.Connection {
   public boolean isReadOnly() throws SQLException {
     return true;
   }
+
+  @Override
+  public String getCatalog() throws SQLException {
+    return null;
+  }
   
   // unsupported below all.
   
@@ -134,11 +139,6 @@ public class Connection implements java.sql.Connection {
 
   @Override
   public void setCatalog(String catalog) throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public String getCatalog() throws SQLException {
     throw new UnsupportedOperationException();
   }
 
