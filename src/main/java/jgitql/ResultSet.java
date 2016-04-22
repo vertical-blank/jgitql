@@ -65,6 +65,7 @@ public class ResultSet implements java.sql.ResultSet {
 
   @Override
   public String getString(int columnIndex) throws SQLException {
+    System.out.println("getString" + columnIndex);
     return this.current.getString(columnIndex);
   }
 
