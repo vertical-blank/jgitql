@@ -171,6 +171,7 @@ public abstract class TableMetaData implements ResultSetMetaData {
 
   public ResultSet describeColumns() {
     List<ResultRow> rows = new ArrayList<ResultRow>();
+    int ordinal = 1;
     for (ColumnMetaData columnMetaData : this.getAllColumnDefs()) {
       rows.add(new ResultRow(this, 
           null,
@@ -179,13 +180,24 @@ public abstract class TableMetaData implements ResultSetMetaData {
           columnMetaData.getName(),
           columnMetaData.getType(),
           columnMetaData.getTypeName(),
-          null,  //columns_size
-          null,  //buffer_length
-          null,  //decimal_digits
-          null,  //num_prec_radix
+          -1,  //columns_size
+          -1,  //buffer_length
+          -1,  //decimal_digits
+          -1,  //num_prec_radix
           columnMetaData.getNullable(),
           null,  //remarks
-          null   //column_def(default)
+          null,  //column_def(default),
+          null,  //sql_data_type
+          null,  //sql_datetime_sub
+          -1,         //char_octet_length
+          ordinal++,  //ordinal_position
+          false,  //is_nullable
+          null,   //scope_catalog
+          null,   //scope_schema
+          null,   //scope_table
+          null,   //source_data_type
+          false,  //is_autoincrement
+          false   //is_generatedcolumn
           )
       );
     }

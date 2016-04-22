@@ -36,7 +36,18 @@ public class Columns extends TableMetaData {
         new ColumnMetaData("num_prec_radix", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
         new ColumnMetaData("nullable", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
         new ColumnMetaData("remarks", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
-        new ColumnMetaData("column_def", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls)
+        new ColumnMetaData("column_def", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("sql_data_type ", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("sql_datetime_sub ", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("char_octet_length ", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("ordinal_position", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("is_nullable", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("scope_catalog", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("scope_schema", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("scope_table", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("source_data_type", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("is_autoincrement", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("is_generatedcolumn", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls)
     };
   }
 
