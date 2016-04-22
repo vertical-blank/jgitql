@@ -19,7 +19,7 @@ jar {
 }
 
 dependencies {
-  compile 'com.github.yohei224:gristle:0.0.1'
+  compile 'com.github.yohei224:glitch:0.0.1'
   compile 'com.github.jsqlparser:jsqlparser:0.9.5'
   compile 'org.slf4j:slf4j-api:1.7.13'
   testCompile 'junit:junit:4.12'
