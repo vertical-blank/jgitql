@@ -8,6 +8,18 @@ import java.sql.SQLException;
 public class DatabaseMetaData implements java.sql.DatabaseMetaData {
 
   @Override
+  public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types)
+      throws SQLException {
+    return new jgitql.ResultSet(null, Tables.instance, Tables.instance.getRows());
+  }
+
+  @Override
+  public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern)
+      throws SQLException {
+    return TableMetaDatas.getTableMetaData(tableNamePattern).describeColumns();
+  }
+
+  @Override
   public <T> T unwrap(Class<T> iface) throws SQLException {
     // TODO Auto-generated method stub
     return null;
@@ -743,13 +755,6 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
   }
 
   @Override
-  public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types)
-      throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
   public ResultSet getSchemas() throws SQLException {
     // TODO Auto-generated method stub
     return null;
@@ -763,13 +768,6 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
 
   @Override
   public ResultSet getTableTypes() throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern)
-      throws SQLException {
     // TODO Auto-generated method stub
     return null;
   }
@@ -803,19 +801,16 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
 
   @Override
   public ResultSet getPrimaryKeys(String catalog, String schema, String table) throws SQLException {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public ResultSet getImportedKeys(String catalog, String schema, String table) throws SQLException {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public ResultSet getExportedKeys(String catalog, String schema, String table) throws SQLException {
-    // TODO Auto-generated method stub
     return null;
   }
 

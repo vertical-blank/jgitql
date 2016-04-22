@@ -11,7 +11,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import jgitql.core.parser.Parser.Expression;
+import jgitql.parser.Parser.Expression;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 
 import org.eclipse.jgit.lib.PersonIdent;

@@ -8,8 +8,6 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import jgitql.core.Connection;
-
 public class Driver implements java.sql.Driver {
   
   static {

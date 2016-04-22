@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jgitql.core.parser.Parser.Expression;
+import jgitql.ResultSet;
+import jgitql.parser.Parser.Expression;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
@@ -25,15 +26,15 @@ public abstract class TableMetaData implements ResultSetMetaData {
 
   public abstract ColumnMetaData[] getAllColumnDefs();
 
-  public TableMetaData(String tableName) {
+  protected TableMetaData(String tableName) {
     this.tableName = tableName;
   }
 
-  public void setSelectItems(List<SelectItem> selectItems) {
+  protected void setSelectItems(List<SelectItem> selectItems) {
     this.selectItems = selectItems;
   }
 
-  public ColumnMetaData[] getRetrieveColumnDefs() {
+  protected ColumnMetaData[] getRetrieveColumnDefs() {
     if (this.columnDefs == null) {
       this.columnDefs = this.getColumnDefsImpl();
     }
@@ -119,23 +120,25 @@ public abstract class TableMetaData implements ResultSetMetaData {
     return this.mapOfAllColumnDefByName;
   }
 
-  public abstract List<ResultRow> getRows(GitRepository repo, Expression expression, List<OrderByElement> orderByElements) throws IOException, SQLException;
-  
-  protected List<ResultRow> filterRowsAndCols(List<ResultRow> rows, Expression expression) throws SQLException{
+  public abstract List<ResultRow> getRows(GitRepository repo,
+      Expression expression,
+      List<OrderByElement> orderByElements) throws IOException, SQLException;
+
+  protected List<ResultRow> filterRowsAndCols(List<ResultRow> rows, Expression expression) throws SQLException {
     List<ResultRow> ret = new ArrayList<ResultRow>();
     for (ResultRow resultRow : rows) {
-      if (expression == null || expression.eval(resultRow)){
+      if (expression == null || expression.eval(resultRow)) {
         ret.add(new ResultRow(this, filterColumns(resultRow.getColValues())));
       }
     }
     return ret;
   }
-  
+
   protected static class RowComparator implements Comparator<ResultRow> {
     private SQLException ex;
     private List<OrderByElement> orderByElements;
-    
-    public RowComparator(List<OrderByElement> orderByElements){
+
+    public RowComparator(List<OrderByElement> orderByElements) {
       this.orderByElements = orderByElements;
     }
 
@@ -149,11 +152,11 @@ public abstract class TableMetaData implements ResultSetMetaData {
         } catch (SQLException ex) {
           this.setEx(ex);
         }
-        if (compareTo != 0){
+        if (compareTo != 0) {
           return compareTo;
         }
       }
-      
+
       return 0;
     }
 
@@ -165,7 +168,41 @@ public abstract class TableMetaData implements ResultSetMetaData {
       this.ex = ex;
     }
   }
-  
+
+  public ResultSet describeColumns() {
+    List<ResultRow> rows = new ArrayList<ResultRow>();
+    int ordinal = 1;
+    for (ColumnMetaData columnMetaData : this.getAllColumnDefs()) {
+      rows.add(new ResultRow(this, 
+          null,
+          null,
+          tableName,
+          columnMetaData.getName(),
+          columnMetaData.getType(),
+          columnMetaData.getTypeName(),
+          -1,  //columns_size
+          -1,  //buffer_length
+          -1,  //decimal_digits
+          -1,  //num_prec_radix
+          columnMetaData.getNullable(),
+          null,  //remarks
+          null,  //column_def(default),
+          null,  //sql_data_type
+          null,  //sql_datetime_sub
+          -1,         //char_octet_length
+          ordinal++,  //ordinal_position
+          false,  //is_nullable
+          null,   //scope_catalog
+          null,   //scope_schema
+          null,   //scope_table
+          null,   //source_data_type
+          false,  //is_autoincrement
+          false   //is_generatedcolumn
+          )
+      );
+    }
+    return new ResultSet(null, Columns.instance, rows);
+  }
 
   @Override
   public String getTableName(int i) {

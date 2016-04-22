@@ -10,7 +10,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import jgitql.core.parser.Parser.Expression;
+import jgitql.parser.Parser.Expression;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 
 public class Tags extends TableMetaData {
