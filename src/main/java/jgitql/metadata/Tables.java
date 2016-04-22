@@ -25,6 +25,10 @@ public class Tables extends TableMetaData {
   @Override
   public ColumnMetaData[] getAllColumnDefs() {
     return new ColumnMetaData[]{
+        new ColumnMetaData("table_name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("table_name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("table_name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
+        new ColumnMetaData("table_name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls),
         new ColumnMetaData("table_name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls)
     };
   }
@@ -33,7 +37,7 @@ public class Tables extends TableMetaData {
     List<ResultRow> rows = new ArrayList<ResultRow>();
     
     for (String tableName : TableMetaDatas.getAllNames()) {
-      rows.add(new ResultRow(this, tableName));
+      rows.add(new ResultRow(this, tableName, tableName, tableName, tableName, tableName));
     }
     
     return rows;
