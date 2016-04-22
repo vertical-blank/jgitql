@@ -14,6 +14,12 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
   }
 
   @Override
+  public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern)
+      throws SQLException {
+    return TableMetaDatas.getTableMetaData(tableNamePattern).describeColumns();
+  }
+
+  @Override
   public <T> T unwrap(Class<T> iface) throws SQLException {
     // TODO Auto-generated method stub
     return null;
@@ -767,13 +773,6 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
   }
 
   @Override
-  public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern)
-      throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
   public ResultSet getColumnPrivileges(String catalog, String schema, String table, String columnNamePattern)
       throws SQLException {
     // TODO Auto-generated method stub
@@ -802,19 +801,16 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
 
   @Override
   public ResultSet getPrimaryKeys(String catalog, String schema, String table) throws SQLException {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public ResultSet getImportedKeys(String catalog, String schema, String table) throws SQLException {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public ResultSet getExportedKeys(String catalog, String schema, String table) throws SQLException {
-    // TODO Auto-generated method stub
     return null;
   }
 

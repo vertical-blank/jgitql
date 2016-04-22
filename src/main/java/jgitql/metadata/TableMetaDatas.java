@@ -21,6 +21,10 @@ public class TableMetaDatas {
     return TABLES.keySet();
   }
 
+  public static TableMetaData getTableMetaData(String name) throws SQLException {
+    return getTableMetaData(name, null);
+  }
+
   public static TableMetaData getTableMetaData(String name, List<SelectItem> selectItems) throws SQLException {
     try {
       if (!TABLES.containsKey(name))

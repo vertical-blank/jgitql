@@ -46,7 +46,7 @@ public class Tables extends TableMetaData {
   @Override
   public List<ResultRow> getRows(GitRepository repo, Expression expression, List<OrderByElement> orderByElements)
       throws IOException, SQLException {
-    throw new UnsupportedOperationException();
+    return getRows();
   }
   
 }
