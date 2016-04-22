@@ -1,10 +1,10 @@
-package jgitdbc.core;
+package jgitql;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 
-import jgitdbc.core.parser.Parser;
+import jgitql.parser.Parser;
 import net.sf.jsqlparser.JSQLParserException;
 
 public class Statement implements java.sql.Statement {

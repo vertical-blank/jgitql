@@ -1,4 +1,4 @@
-package jgitql.core;
+package jgitql;
 
 import glitch.GitRepository;
 

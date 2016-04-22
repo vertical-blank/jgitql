@@ -1,4 +1,4 @@
-package jgitql.core.parser;
+package jgitql.parser;
 
 import glitch.GitRepository;
 
@@ -7,11 +7,11 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
-import jgitql.core.ResultSet;
-import jgitql.core.Statement;
+import jgitql.ResultSet;
+import jgitql.Statement;
 import jgitql.metadata.ResultRow;
 import jgitql.metadata.TableMetaData;
-import jgitql.metadata.Tables;
+import jgitql.metadata.TableMetaDatas;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.expression.LongValue;
@@ -55,7 +55,7 @@ public class Parser {
     
     List<SelectItem> selectItems = select.getSelectItems();
     
-    TableMetaData metaData = Tables.get(tableName, selectItems);
+    TableMetaData metaData = TableMetaDatas.getTableMetaData(tableName, selectItems);
     
     Expression expression = null;
     if (select.getWhere() != null) {

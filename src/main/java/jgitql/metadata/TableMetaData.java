@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jgitql.core.parser.Parser.Expression;
+import jgitql.parser.Parser.Expression;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
@@ -25,15 +25,15 @@ public abstract class TableMetaData implements ResultSetMetaData {
 
   public abstract ColumnMetaData[] getAllColumnDefs();
 
-  public TableMetaData(String tableName) {
+  protected TableMetaData(String tableName) {
     this.tableName = tableName;
   }
 
-  public void setSelectItems(List<SelectItem> selectItems) {
+  protected void setSelectItems(List<SelectItem> selectItems) {
     this.selectItems = selectItems;
   }
 
-  public ColumnMetaData[] getRetrieveColumnDefs() {
+  protected ColumnMetaData[] getRetrieveColumnDefs() {
     if (this.columnDefs == null) {
       this.columnDefs = this.getColumnDefsImpl();
     }

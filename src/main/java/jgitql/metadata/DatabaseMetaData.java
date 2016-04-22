@@ -8,6 +8,12 @@ import java.sql.SQLException;
 public class DatabaseMetaData implements java.sql.DatabaseMetaData {
 
   @Override
+  public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types)
+      throws SQLException {
+    return new jgitql.ResultSet(null, Tables.instance, Tables.instance.getRows());
+  }
+
+  @Override
   public <T> T unwrap(Class<T> iface) throws SQLException {
     // TODO Auto-generated method stub
     return null;
@@ -738,13 +744,6 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
       String schemaPattern,
       String procedureNamePattern,
       String columnNamePattern) throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types)
-      throws SQLException {
     // TODO Auto-generated method stub
     return null;
   }

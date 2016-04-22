@@ -1,35 +1,48 @@
 package jgitql.metadata;
 
+import glitch.GitRepository;
+
+import java.io.IOException;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import net.sf.jsqlparser.statement.select.SelectItem;
+import jgitql.parser.Parser.Expression;
+import net.sf.jsqlparser.statement.select.OrderByElement;
 
-public class Tables {
-  private static final Map<String, Class<? extends TableMetaData>> TABLES = new HashMap<String, Class<? extends TableMetaData>>();
-  static {
-    TABLES.put(Branches.TABLE_NAME, Branches.class);
-    TABLES.put(Commits.TABLE_NAME, Commits.class);
-    TABLES.put(Files.TABLE_NAME, Files.class);
-    TABLES.put(Tags.TABLE_NAME, Tags.class);
-  }
+public class Tables extends TableMetaData {
+  
+  public static final Tables instance = new Tables();
 
-  public static TableMetaData get(String name, List<SelectItem> selectItems) throws SQLException {
-    try {
-      if (!TABLES.containsKey(name))
-        throw new SQLException("No such table: " + name);
-
-      TableMetaData newInstance = TABLES.get(name).newInstance();
-      newInstance.setSelectItems(selectItems);
-      return newInstance;
-    } catch (InstantiationException | IllegalAccessException e) {
-      throw new SQLException("No such table: " + name);
-    }
-  }
+  private static final String TABLE_NAME = "Tables";
 
   private Tables() {
-
+    super(TABLE_NAME);
   }
+
+  @Override
+  public ColumnMetaData[] getAllColumnDefs() {
+    return new ColumnMetaData[]{
+        new ColumnMetaData("table_name", Types.VARCHAR, String.class, ResultSetMetaData.columnNoNulls)
+    };
+  }
+
+  public List<ResultRow> getRows() {
+    List<ResultRow> rows = new ArrayList<ResultRow>();
+    
+    for (String tableName : TableMetaDatas.getAllNames()) {
+      rows.add(new ResultRow(this, tableName));
+    }
+    
+    return rows;
+  }
+
+  @Override
+  public List<ResultRow> getRows(GitRepository repo, Expression expression, List<OrderByElement> orderByElements)
+      throws IOException, SQLException {
+    throw new UnsupportedOperationException();
+  }
+  
 }
