@@ -31,6 +31,16 @@ public class ResultRow {
     }
     return String.valueOf(val);
   }
+  
+  public int getInt(int columnNumber) {
+    Object val = getColValue(columnNumber);
+    
+    if (val == null){
+      return 0;
+    }
+    
+    return Integer.valueOf(String.valueOf(val)).intValue();
+  }
 
   public Object[] getColValues() {
     return colValues;
